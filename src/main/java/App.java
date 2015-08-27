@@ -98,13 +98,24 @@ public class App {
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
 
-    post("/restaurants", (request, response) -> {
+    get("/restaurants/:id/delete", (request, response) -> {
+      HashMap<String, Object> model = new HashMap<String, Object>();
+      Restaurant restaurant = Restaurant.find(Integer.parseInt(request.params(":id")));
+      restaurant.delete();
+      List<Restaurant> restaurants = Restaurant.all();
+      model.put("restaurants", restaurants);
+      model.put("template", "templates/restaurants.vtl");
+      return new ModelAndView(model, layout);
+    }, new VelocityTemplateEngine());
+
+    post("/restaurants/:id", (request, response) -> {
       HashMap<String, Object> model = new HashMap<String, Object>();
       //String updateName = request.queryParams("restaurantName");
 
       List<Cuisine> cuisines = Cuisine.all();
-      Cuisine cuisine = Cuisine.find(Integer.parseInt(request.params(":id")));
-      Restaurant restaurant = Restaurant.find(Integer.parseInt(request.queryParams("id")));
+      // Cuisine cuisine = Cuisine.find(Integer.parseInt(request.params(":id")));
+      Restaurant restaurant = Restaurant.find(Integer.parseInt(request.params(":id")));
+      Cuisine cuisine = Cuisine.find(Integer.parseInt(request.queryParams("cuisineId")));
       restaurant.updateName(request.queryParams("restaurantName"));
       restaurant.updateDescription(request.queryParams("description"));
       List<Restaurant> restaurants = cuisine.getRestaurants();
@@ -114,6 +125,16 @@ public class App {
       model.put("template", "templates/cuisine-restaurants.vtl");
       return new ModelAndView(model, layout);
     }, new VelocityTemplateEngine());
+    //
+    // put("/restaurants/:id", (request, response) -> {
+    //   HashMap<String, Object> model = new HashMap<String, Object>();
+    //   Restaurant restaurant = Restaurant.find(Integer.parseInt(request.params(":id")));
+    //   restaurant.updateName(request.queryParams("restaurantName"));
+    //   List<Restaurant> restaurants = Restaurant.all();
+    //   model.put("restaurants", restaurants);
+    //   model.put("template", "templates/restaurants.vtl");
+    //   return new ModelAndView(model, layout);
+    // }, new VelocityTemplateEngine());
 
    }
 
